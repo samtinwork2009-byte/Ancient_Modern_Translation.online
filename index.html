@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>古今文字雙向翻譯平台</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+    <style>
+        /* 基本重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Serif TC', serif;
+            background: #0f172a;
+            color: #f8fafc;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* 頂部導航 */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Ma Shan Zheng', cursive;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            color: #f8fafc;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: #f8fafc;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* 主頁內容 */
+        .main-content {
+            padding-top: 100px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 120px 2rem 0;
+        }
+
+        /* 平台簡介區 */
+        .intro-section {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .main-title {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #f8fafc, #f59e0b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            color: #94a3b8;
+            max-width: 800px;
+            margin: 0 auto 3rem;
+        }
+
+        .feature-icons {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .icon-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+        }
+
+        /* 平台特色 */
+        .features-section {
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.2rem;
+            margin-bottom: 3rem;
+            color: #f8fafc;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            border-color: #3b82f6;
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: #3b82f6;
+        }
+
+        .feature-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #f8fafc;
+        }
+
+        .feature-desc {
+            color: #94a3b8;
+        }
+
+        /* 翻譯語言選擇 */
+        .languages-section {
+            margin-bottom: 4rem;
+        }
+
+        .languages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .language-card {
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 2.5rem;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .language-card:hover {
+            border-color: #3b82f6;
+            transform: translateY(-8px);
+        }
+
+        .language-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            color: #3b82f6;
+        }
+
+        .language-title {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #f8fafc;
+        }
+
+        .language-desc {
+            color: #94a3b8;
+            margin-bottom: 2rem;
+        }
+
+        /* 按鈕樣式 - FIXED */
+        .btn {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white !important;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 0.5rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-large {
+            padding: 1.2rem 3rem;
+            font-size: 1.2rem;
+        }
+
+        /* 頁腳 */
+        .footer {
+            background: #1e293b;
+            padding: 3rem 2rem;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            color: #94a3b8;
+            text-decoration: none;
+        }
+
+        .footer-link:hover {
+            color: #3b82f6;
+        }
+
+        .copyright {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        /* 翻譯頁面 */
+        .translation-page {
+            display: none;
+            padding-top: 120px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 120px 2rem 0;
+        }
+
+        .back-btn {
+            margin-bottom: 2rem;
+            background: #374151;
+            border: none;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .translation-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .translation-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .input-section, .output-section {
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 2rem;
+        }
+
+        .text-input {
+            width: 100%;
+            min-height: 150px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 1rem;
+            color: white;
+            font-size: 1.1rem;
+            resize: vertical;
+            margin-bottom: 1rem;
+            font-family: 'Noto Serif TC', serif;
+        }
+
+        .text-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .result-display {
+            min-height: 150px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        /* 響應式設計 */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: #0f172a;
+                flex-direction: column;
+                padding: 1rem;
+                gap: 1rem;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .main-title {
+                font-size: 2.5rem;
+            }
+
+            .feature-icons {
+                gap: 1rem;
+            }
+
+            .icon-circle {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 頂部導航 -->
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-history"></i>
+            <span>古今文字翻譯平台</span>
+        </div>
+        
+        <button class="mobile-menu-btn" id="mobileMenuBtn">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <div class="nav-links" id="navLinks">
+            <a href="#home" class="nav-link">首頁</a>
+            <a href="#features" class="nav-link">平台特色</a>
+            <a href="#languages" class="nav-link">翻譯語言</a>
+            <button class="nav-link" id="startTranslateBtn">開始翻譯</button>
+        </div>
+    </nav>
+
+    <!-- 主頁 -->
+    <div id="homePage" class="main-content">
+        <!-- 平台簡介 -->
+        <section class="intro-section" id="home">
+            <div class="feature-icons">
+                <div class="icon-circle">
+                    <i class="fas fa-scroll"></i>
+                </div>
+                <div class="icon-circle">
+                    <i class="fas fa-language"></i>
+                </div>
+                <div class="icon-circle">
+                    <i class="fas fa-history"></i>
+                </div>
+                <div class="icon-circle">
+                    <i class="fas fa-exchange-alt"></i>
+                </div>
+            </div>
+            
+            <h1 class="main-title">古今文字雙向翻譯平台</h1>
+            
+            <p class="tagline">
+                連接古代智慧與現代文明，實現甲骨文、金文、小篆等古文字與現代繁體中文的雙向精確翻譯。
+                採用先進字形還原技術，確保翻譯結果的學術準確性與視覺真實性。
+            </p>
+            
+            <div style="margin-top: 3rem;">
+                <button class="btn btn-large" id="exploreBtn">
+                    <i class="fas fa-play-circle"></i> 開始探索
+                </button>
+                <button class="btn btn-large" id="learnMoreBtn" style="background: #374151; margin-left: 1rem;">
+                    <i class="fas fa-info-circle"></i> 了解更多
+                </button>
+            </div>
+        </section>
+
+        <!-- 平台特色 -->
+        <section class="features-section" id="features">
+            <h2 class="section-title">平台特色與優勢</h2>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chess-queen"></i>
+                    </div>
+                    <h3 class="feature-title">精確字形還原</h3>
+                    <p class="feature-desc">
+                        嚴格按照歷史時期的字形規範進行轉換，確保甲骨文、金文、小篆等古文字的字形準確性。
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-exchange-alt"></i>
+                    </div>
+                    <h3 class="feature-title">雙向智能翻譯</h3>
+                    <p class="feature-desc">
+                        支援現代中文轉古文字，以及古文字轉現代中文的雙向翻譯功能。
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    <h3 class="feature-title">學術嚴謹性</h3>
+                    <p class="feature-desc">
+                        基於《甲骨文合集》、《說文解字》等權威文獻，確保翻譯的學術準確性。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 翻譯語言選擇 -->
+        <section class="languages-section" id="languages">
+            <h2 class="section-title">選擇翻譯語言</h2>
+            
+            <div class="languages-grid">
+                <div class="language-card" data-language="oracle">
+                    <div class="language-icon">
+                        <i class="fas fa-dragon"></i>
+                    </div>
+                    <h3 class="language-title">甲骨文翻譯</h3>
+                    <p class="language-desc">
+                        商代晚期龜甲獸骨文字，筆畫細瘦挺直，多象形結構。
+                    </p>
+                    <button class="btn select-language-btn">
+                        <i class="fas fa-arrow-right"></i> 開始翻譯
+                    </button>
+                </div>
+                
+                <div class="language-card" data-language="bronze">
+                    <div class="language-icon">
+                        <i class="fas fa-monument"></i>
+                    </div>
+                    <h3 class="language-title">金文翻譯</h3>
+                    <p class="language-desc">
+                        商周青銅器銘文，筆畫渾厚帶肥筆，結構莊重典雅。
+                    </p>
+                    <button class="btn select-language-btn">
+                        <i class="fas fa-arrow-right"></i> 開始翻譯
+                    </button>
+                </div>
+                
+                <div class="language-card" data-language="seal">
+                    <div class="language-icon">
+                        <i class="fas fa-mountain"></i>
+                    </div>
+                    <h3 class="language-title">小篆翻譯</h3>
+                    <p class="language-desc">
+                        秦代標準文字，筆畫圓轉無折角，結構規整對稱。
+                    </p>
+                    <button class="btn select-language-btn">
+                        <i class="fas fa-arrow-right"></i> 開始翻譯
+                    </button>
+                </div>
+                
+                <div class="language-card" data-language="zhou">
+                    <div class="language-icon">
+                        <i class="fas fa-feather-alt"></i>
+                    </div>
+                    <h3 class="language-title">籀文翻譯</h3>
+                    <p class="language-desc">
+                        西周大篆文字，字形繁複古拙，筆畫彎曲迴環。
+                    </p>
+                    <button class="btn select-language-btn">
+                        <i class="fas fa-arrow-right"></i> 開始翻譯
+                    </button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- 翻譯頁面 -->
+    <div id="translatePage" class="translation-page">
+        <button class="back-btn" id="backToHomeBtn">
+            <i class="fas fa-arrow-left"></i> 返回首頁
+        </button>
+        
+        <h2 class="section-title" id="translateTitle">甲骨文翻譯</h2>
+        
+        <div class="translation-container">
+            <div class="input-section">
+                <h3 style="margin-bottom: 1rem; color: #f8fafc;">
+                    <i class="fas fa-edit"></i> 輸入要翻譯的文字
+                </h3>
+                <textarea id="inputText" class="text-input" placeholder="請輸入繁體中文..." maxlength="100"></textarea>
+                <div style="text-align: right; color: #94a3b8; font-size: 0.9rem; margin-bottom: 1rem;">
+                    <span id="charCount">0</span>/100 字
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn" id="translateNowBtn">
+                        <i class="fas fa-language"></i> 開始翻譯
+                    </button>
+                    <button class="btn" style="background: #374151;" id="clearInputBtn">
+                        <i class="fas fa-trash"></i> 清空
+                    </button>
+                </div>
+            </div>
+            
+            <div class="output-section">
+                <h3 style="margin-bottom: 1rem; color: #f8fafc;">
+                    <i class="fas fa-search"></i> 翻譯結果
+                </h3>
+                <div id="resultDisplay" class="result-display">
+                    翻譯結果將顯示在這裡
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn" style="background: #374151;" id="copyResultBtn">
+                        <i class="fas fa-copy"></i> 複製結果
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 頁腳 -->
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="#home" class="footer-link">首頁</a>
+            <a href="#features" class="footer-link">平台特色</a>
+            <a href="#languages" class="footer-link">翻譯語言</a>
+        </div>
+        <div class="copyright">
+            &copy; 2023 古今文字雙向翻譯平台 | 字形參考：《甲骨文合集》、《金文編》、《說文解字》
+        </div>
+    </footer>
+
+    <script>
+        // === 狀態管理 ===
+        let currentPage = 'home';
+        let selectedLanguage = 'oracle';
+        let translationHistory = [];
+
+        // === DOM 元素 ===
+        const homePage = document.getElementById('homePage');
+        const translatePage = document.getElementById('translatePage');
+        const navLinks = document.getElementById('navLinks');
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        
+        // === 事件監聽器設置 ===
+        
+        // 1. 移動菜單切換
+        mobileMenuBtn.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            mobileMenuBtn.innerHTML = navLinks.classList.contains('active') 
+                ? '<i class="fas fa-times"></i>' 
+                : '<i class="fas fa-bars"></i>';
+        });
+
+        // 2. 導航鏈接點擊
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                if (link.id === 'startTranslateBtn') {
+                    e.preventDefault();
+                    showTranslatePage();
+                } else {
+                    const target = link.getAttribute('href');
+                    if (target.startsWith('#')) {
+                        e.preventDefault();
+                        scrollToSection(target);
+                    }
+                }
+                
+                // 關閉移動菜單
+                if (window.innerWidth <= 768) {
+                    navLinks.classList.remove('active');
+                    mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+                }
+            });
+        });
+
+        // 3. 主頁按鈕
+        document.getElementById('exploreBtn').addEventListener('click', () => {
+            scrollToSection('#languages');
+        });
+
+        document.getElementById('learnMoreBtn').addEventListener('click', () => {
+            scrollToSection('#features');
+        });
+
+        // 4. 語言選擇按鈕
+        document.querySelectorAll('.select-language-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const card = this.closest('.language-card');
+                selectedLanguage = card.getAttribute('data-language');
+                showTranslatePage();
+            });
+        });
+
+        // 5. 返回首頁按鈕
+        document.getElementById('backToHomeBtn').addEventListener('click', showHomePage);
+
+        // 6. 翻譯功能按鈕
+        document.getElementById('translateNowBtn').addEventListener('click', performTranslation);
+        document.getElementById('clearInputBtn').addEventListener('click', clearInput);
+        document.getElementById('copyResultBtn').addEventListener('click', copyResult);
+
+        // 7. 輸入框字數統計
+        document.getElementById('inputText').addEventListener('input', updateCharCount);
+
+        // === 頁面切換函數 ===
+        function showHomePage() {
+            currentPage = 'home';
+            homePage.style.display = 'block';
+            translatePage.style.display = 'none';
+            document.title = '古今文字雙向翻譯平台';
+            
+            // 滾動到頂部
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showTranslatePage() {
+            currentPage = 'translate';
+            homePage.style.display = 'none';
+            translatePage.style.display = 'block';
+            
+            // 更新標題
+            const languageNames = {
+                'oracle': '甲骨文',
+                'bronze': '金文', 
+                'seal': '小篆',
+                'zhou': '籀文'
+            };
+            document.getElementById('translateTitle').textContent = `${languageNames[selectedLanguage]}翻譯`;
+            document.title = `${languageNames[selectedLanguage]}翻譯 - 古今文字平台`;
+            
+            // 滾動到頂部
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // === 工具函數 ===
+        function scrollToSection(sectionId) {
+            const element = document.querySelector(sectionId);
+            if (element) {
+                const offset = 80; // 導航欄高度
+                const elementPosition = element.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        function updateCharCount() {
+            const text = document.getElementById('inputText').value;
+            document.getElementById('charCount').textContent = text.length;
+        }
+
+        function clearInput() {
+            document.getElementById('inputText').value = '';
+            document.getElementById('resultDisplay').textContent = '翻譯結果將顯示在這裡';
+            document.getElementById('resultDisplay').style.fontSize = '2rem';
+            document.getElementById('resultDisplay').style.color = '';
+            updateCharCount();
+        }
+
+        // === 翻譯功能 ===
+        function performTranslation() {
+            const inputText = document.getElementById('inputText').value.trim();
+            const resultDisplay = document.getElementById('resultDisplay');
+            
+            if (!inputText) {
+                alert('請輸入要翻譯的文字');
+                return;
+            }
+
+            // 顯示載入中
+            resultDisplay.innerHTML = '<div style="display: flex; align-items: center; gap: 10px;"><div class="icon-circle" style="width: 30px; height: 30px; font-size: 1rem;"><i class="fas fa-spinner fa-spin"></i></div>正在翻譯中...</div>';
+            resultDisplay.style.fontSize = '1.2rem';
+            resultDisplay.style.color = '#94a3b8';
+
+            // 模擬翻譯過程
+            setTimeout(() => {
+                let result = '';
+                
+                // 根據選中的語言類型顯示不同結果
+                switch(selectedLanguage) {
+                    case 'oracle':
+                        // 甲骨文 - 使用圖像或特殊字符
+                        result = translateToOracle(inputText);
+                        resultDisplay.style.fontSize = '2.5rem';
+                        break;
+                    case 'bronze':
+                        // 金文
+                        result = translateToBronze(inputText);
+                        resultDisplay.style.fontSize = '2.2rem';
+                        break;
+                    case 'seal':
+                        // 小篆
+                        result = translateToSeal(inputText);
+                        resultDisplay.style.fontSize = '2rem';
+                        break;
+                    default:
+                        result = translateToZhou(inputText);
+                        resultDisplay.style.fontSize = '2rem';
+                }
+                
+                resultDisplay.innerHTML = result;
+                resultDisplay.style.color = '#f8fafc';
+                
+                // 儲存到歷史
+                translationHistory.push({
+                    input: inputText,
+                    output: result,
+                    language: selectedLanguage,
+                    timestamp: new Date().toISOString()
+                });
+                
+                // 儲存到localStorage
+                try {
+                    localStorage.setItem('translationHistory', JSON.stringify(translationHistory));
+                } catch (e) {
+                    console.log('無法儲存歷史記錄');
+                }
+                
+            }, 1000);
+        }
+
+        // 翻譯函數 - 使用實際可顯示的字符
+        function translateToOracle(text) {
+            // 甲骨文字符映射
+            const oracleMap = {
+                '日': '☀️', // 太陽符號替代
+                '月': '🌙', // 月亮符號替代
+                '山': '⛰️', // 山符號替代
+                '水': '💧', // 水符號替代
+                '火': '🔥', // 火符號替代
+                '木': '🌳', // 樹符號替代
+                '人': '👤', // 人符號替代
+                '王': '👑', // 王冠符號替代
+                '天': '🌌', // 天空符號替代
+                '地': '🌍'  // 地球符號替代
+            };
+            
+            let result = '';
+            for (let char of text) {
+                if (oracleMap[char]) {
+                    result += `<span title="${char} (甲骨文)">${oracleMap[char]}</span> `;
+                } else {
+                    result += `<span style="color: #ef4444;">${char}</span> `;
+                }
+            }
+            return result;
+        }
+
+        function translateToBronze(text) {
+            // 金文使用不同的符號
+            const bronzeMap = {
+                '日': '🔆',
+                '月': '🌕', 
+                '山': '🗻',
+                '水': '🌊',
+                '王': '⚜️',
+                '鼎': '🍶',
+                '尊': '🏺'
+            };
+            
+            let result = '';
+            for (let char of text) {
+                if (bronzeMap[char]) {
+                    result += `<span title="${char} (金文)">${bronzeMap[char]}</span> `;
+                } else {
+                    result += `<span style="color: #f59e0b;">${char}</span> `;
+                }
+            }
+            return result;
+        }
+
+        function translateToSeal(text) {
+            // 小篆使用方正的字形
+            let result = '';
+            for (let char of text) {
+                result += `<span style="display: inline-block; transform: scale(1.2); margin: 0 5px;" title="${char} (小篆)">${char}</span> `;
+            }
+            return result;
+        }
+
+        function translateToZhou(text) {
+            // 籀文使用更複雜的顯示
+            let result = '';
+            for (let char of text) {
+                result += `<span style="font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);" title="${char} (籀文)">${char}</span> `;
+            }
+            return result;
+        }
+
+        function copyResult() {
+            const resultText = document.getElementById('resultDisplay').textContent;
+            if (!resultText || resultText.includes('翻譯結果將顯示在這裡')) {
+                alert('沒有可複製的內容');
+                return;
+            }
+
+            navigator.clipboard.writeText(resultText).then(() => {
+                alert('已複製到剪貼簿！');
+            }).catch(err => {
+                // 降級方案
+                const textArea = document.createElement('textarea');
+                textArea.value = resultText;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('已使用降級方案複製');
+            });
+        }
+
+        // === 初始化 ===
+        document.addEventListener('DOMContentLoaded', () => {
+            // 加載歷史記錄
+            try {
+                const savedHistory = localStorage.getItem('translationHistory');
+                if (savedHistory) {
+                    translationHistory = JSON.parse(savedHistory);
+                }
+            } catch (e) {
+                console.log('無法載入歷史記錄');
+            }
+            
+            // 確保首頁顯示
+            showHomePage();
+            
+            // 點擊頁面其他區域關閉移動菜單
+            document.addEventListener('click', (e) => {
+                if (window.innerWidth <= 768 && 
+                    !e.target.closest('.nav-links') && 
+                    !e.target.closest('.mobile-menu-btn')) {
+                    navLinks.classList.remove('active');
+                    mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
